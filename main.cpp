@@ -1,5 +1,6 @@
-#include <math.h>
+﻿#include <math.h>
 #include <stdio.h>
+#include <ctime>
 
 float eps = 0.01;
 
@@ -22,7 +23,7 @@ public:
 	void out()
 	{
 		printf("x=%f\t", x);
-		printf("y=%f\t", y);
+		printf("y=%f\n", y);
 	}
 };
 vector operator +(vector a, vector b)
@@ -76,12 +77,16 @@ int main()
 	float dt = 0.01;
 	float t = 0.0;
 	vector u(0, 0);
+	int countIter = 0;
 
+	unsigned int start_time =  clock(); 
 
 	while (t<1)
 	{
-		printf("x=%f\t", u.x);
-		printf("y=%f\n", u.y);
+		//if (countIter < 268)
+			u.out();
+
+		countIter += 1;
 
 		k1 = f(u, t)*dt;
 		k2 = (1.0 / 3.0) * f(u + k1, t + dt * (1.0 / 3.0))*dt;
@@ -93,16 +98,23 @@ int main()
 
 		R = (k1 - (9.0 / 2.0) * k3 + 4 * k4 - (1.0 / 2.0) * k5);
 
-		if ((fabs(R.x)< (5.0 / 32.0) * eps) || (fabs(R.y)< (5.0 / 32.0) * eps))
-		{
-			dt = dt *2.0;
-		}
+		
 		if ((fabs(R.x) > 5 * eps) || (fabs(R.y) > 5 * eps))
 		{
 			dt = dt / 2.0;
 		}
+
+		if ((fabs(R.x)< (5.0 / 32.0) * eps) || (fabs(R.y)< (5.0 / 32.0) * eps))
+		{
+			dt = dt *2.0;
+		}
 		t += dt;
 	}
+
+	unsigned int end_time = clock();
+
+
+	printf( "Number of iterations: %d\nPrecision: %lf\n, Time(ms): %d", countIter, eps, end_time - start_time);
 
 	return 0;
 }
